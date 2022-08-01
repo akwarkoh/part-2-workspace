@@ -96,21 +96,10 @@ public class CatalogTest {
     assertEquals(94, loudest.getVolume());
   }
 
+  @Test
   public void testSortByVolume(){
     List<Television>tvs=new ArrayList<>(Catalog.getInventory());
-        tvs.sort((tv1, tv2) -> {
-         // if (tv1.getVolume()<tv2.getVolume()) {
-         //   return -1;
-         // } else if (tv1.getVolume()>tv2.getVolume()) {
-          //  return 1;
-         // }else{
-            //return 0;
-         //OR
-            //return tv1.getVolume()- tv2.getVolume();
-          return Integer.compare(tv1.getVolume(), tv2.getVolume());
-
-
-        });
+        tvs.sort(Comparator.comparingInt(Television::getVolume));//.reversed());
     System.out.println(tvs);
   }
 }
