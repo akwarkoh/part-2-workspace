@@ -8,10 +8,15 @@
  */
 package com.javatunes.catalog;
 
+//import static jdk.tools.jlink.internal.plugins.SystemModulesPlugin.sorted;
+import static java.util.Comparator.comparing;
 import static org.junit.Assert.*;
+import static java.util.stream.Collectors.*;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +40,7 @@ public class CatalogStreamTest {
   public void testArtistStartsWithSortPrice() {
     List<MusicItem> items = allMusicItems.stream()
       .filter(item -> item.getArtist().startsWith("D"))
-      .sorted(Comparator.comparing(item -> item.getPrice()))
+      .sorted(comparing(item -> item.getPrice()))
       .collect(Collectors.toList());
     
     assertEquals(2, items.size());
@@ -48,12 +53,28 @@ public class CatalogStreamTest {
    * MusicItem implements Comparable: natural order is id increasing.
    * 
    * RESULT:
-   */
+   */// TODO
   @Test
   public void testTitleEqualsArtistSortNaturalOrder() {
-    // TODO
+    List<MusicItem>items=allMusicItems
+        .stream()
+        .filter((item)->item.getArtist().equals(item.getTitle()))
+    .sorted()
+        .collect(Collectors.toList());
+    System.out.println(items);
+
   }
-  
+
+//    List<MusicItem> items = allMusicItems.stream()
+//        .filter(item -> item.getArtist().equals(item.getTitle()))
+//        .sorted(comparing(item -> item.getId()))
+//        .collect(Collectors.toList());
+//    System.out.println(items);
+//    System.out.println(items.size());
+//    assertEquals(2, items.size());
+//    assertEquals(items.get(0).getTitle(), items.get(0).getArtist());
+//    assertEquals(items.get(1).getTitle(), items.get(1).getArtist());
+//  }
   /**
    * TASK: find all MusicItems whose price is less than 12.00 and sort them by genre (MusicCategory).
    * The natural order of an enum is the order in which they're declared (it's not alphabetical).
@@ -63,6 +84,12 @@ public class CatalogStreamTest {
    */
   @Test
   public void testPriceLessThanSortMusicCategory() {
+    List<MusicItem>items=allMusicItems
+        .stream()
+        .filter((item)->item.getPrice()<12.0)
+        .sorted(Comparator.comparing(MusicItem::getMusicCategory))
+            .collect(Collectors.toList());
+    System.out.println(items);
     // TODO
   }
   
@@ -73,6 +100,12 @@ public class CatalogStreamTest {
    */
   @Test
   public void testSortMusicCategorySortReleaseDateDesc() {
+
+    allMusicItems
+       .stream()
+       .filter(((Predicate<MusicItem>)(item)->item.getMusicCategory()==MusicCategory.ROCK).and((item)->item.getPrice()<15.0))
+               .sorted(Comparator.comparing(MusicItem::getReleaseDate))
+                        .forEach(System.out::println);
     // TODO
   }
   
@@ -85,6 +118,13 @@ public class CatalogStreamTest {
   @Test
   public void testPriceGreaterThanSortPriceDescThenMusicCategory() {
     // TODO
+
+    List<MusicItem> items = allMusicItems.stream()
+        .filter(item -> item.getPrice() > 17.00)
+        .sorted(
+            comparing(MusicItem::getPrice).reversed()
+                .thenComparing(MusicItem::getArtist))
+        .collect(Collectors.toList());
   }
   
   /**
@@ -95,6 +135,13 @@ public class CatalogStreamTest {
    */
   @Test
   public void testReleaseDateSortArtist() {
-    // TODO
+    List<MusicItem>items=allMusicItems
+        .stream()
+        .filter((item)->item.getPrice()<12.0)
+        .filter((item)->item.getReleaseDate().toString().startsWith("198"))
+        .sorted(Comparator.comparing(MusicItem::getArtist))
+        .collect(Collectors.toList());
+    System.out.println(items);
+
   }
 }
